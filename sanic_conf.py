@@ -1,7 +1,7 @@
 import importlib
 import os
 
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 ENVIRONMENT_VARIABLE = 'SANIC_SETTINGS_MODULE'
 
 
@@ -20,3 +20,6 @@ class Settings:
             if setting.isupper():
                 setting_value = getattr(module, setting)
                 setattr(self, setting, setting_value)
+
+
+settings = Settings()
