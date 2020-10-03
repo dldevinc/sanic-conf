@@ -1,7 +1,7 @@
 import importlib
 import os
 
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 ENVIRONMENT_VARIABLE = 'SANIC_SETTINGS_MODULE'
 
 

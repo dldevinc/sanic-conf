@@ -30,15 +30,16 @@ Apply to Sanic config
 ```python
 import os
 from sanic import Sanic
+from sanic_conf import settings
 
 app = Sanic(__name__, load_env=False)
 
 # settings
 os.environ.setdefault('SANIC_SETTINGS_MODULE', 'settings')
-app.config.from_object('sanic_conf.Settings')
+app.config.update_config(settings)
 ```
 
-## Advanced usage
+## Environment variables 
 
 Note that you can use [django-environ](https://github.com/joke2k/django-environ)
 with Sanic.
