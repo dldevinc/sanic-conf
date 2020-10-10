@@ -1,27 +1,42 @@
 import importlib
 import os
-import lazy_object_proxy
 
-__version__ = '0.0.4'
+__version__ = '0.0.5'
 ENVIRONMENT_VARIABLE = 'SANIC_SETTINGS_MODULE'
 
 
-def load_settings():
-    settings = {}
+class Settings:
+    def __init__(self):
+        self.__ready = False
 
-    settings_module = os.environ.get(ENVIRONMENT_VARIABLE)
-    if not settings_module:
-        raise RuntimeError(
-            "You must define the environment variable %s before "
-            "accessing settings." % ENVIRONMENT_VARIABLE
-        )
+    def __getattr__(self, item):
+        if self.__ready is False:
+            self.__setup()
 
-    module = importlib.import_module(settings_module)
-    return {
-        key: getattr(module, key)
-        for key in dir(module)
-        if key.isupper()
-    }
+        if item in self.__dict__:
+            return self.__dict__[item]
+        raise AttributeError(item)
+
+    def __contains__(self, item):
+        if self.__ready is False:
+            self.__setup()
+        return item in self.__dict__
+
+    def __setup(self):
+        settings_module = os.environ.get(ENVIRONMENT_VARIABLE)
+        if not settings_module:
+            raise RuntimeError(
+                "You must define the environment variable %s before "
+                "accessing settings." % ENVIRONMENT_VARIABLE
+            )
+
+        module = importlib.import_module(settings_module)
+        self.__dict__.update({
+            key: getattr(module, key)
+            for key in dir(module)
+            if key.isupper()
+        })
+        self.__ready = True
 
 
-settings = lazy_object_proxy.Proxy(load_settings)
+settings = Settings()
