@@ -1,7 +1,7 @@
 import importlib
 import os
 
-__version__ = '0.0.5'
+__version__ = '0.0.6'
 ENVIRONMENT_VARIABLE = 'SANIC_SETTINGS_MODULE'
 
 
@@ -11,7 +11,7 @@ class Settings:
 
     def __getattr__(self, item):
         if self.__ready is False:
-            self.__setup()
+            self._setup()
 
         if item in self.__dict__:
             return self.__dict__[item]
@@ -19,10 +19,13 @@ class Settings:
 
     def __contains__(self, item):
         if self.__ready is False:
-            self.__setup()
+            self._setup()
         return item in self.__dict__
 
-    def __setup(self):
+    def _setup(self):
+        if self.__ready:
+            raise RuntimeError("_setup() isn't reentrant")
+
         settings_module = os.environ.get(ENVIRONMENT_VARIABLE)
         if not settings_module:
             raise RuntimeError(
@@ -30,13 +33,19 @@ class Settings:
                 "accessing settings." % ENVIRONMENT_VARIABLE
             )
 
-        module = importlib.import_module(settings_module)
+        self._load_settings(settings_module)
+        self.__ready = True
+
+    def _load_settings(self, module_path):
+        module = importlib.import_module(module_path)
+        self._extend(module)
+
+    def _extend(self, module):
         self.__dict__.update({
             key: getattr(module, key)
             for key in dir(module)
             if key.isupper()
         })
-        self.__ready = True
 
 
 settings = Settings()
