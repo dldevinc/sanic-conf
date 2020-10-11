@@ -1,11 +1,12 @@
 import importlib
 import os
 
-__version__ = '0.0.6'
-ENVIRONMENT_VARIABLE = 'SANIC_SETTINGS_MODULE'
+__version__ = '0.0.7'
 
 
 class Settings:
+    ENVIRONMENT_VARIABLE = 'SANIC_SETTINGS_MODULE'
+
     def __init__(self):
         self.__ready = False
 
@@ -26,11 +27,11 @@ class Settings:
         if self.__ready:
             raise RuntimeError("_setup() isn't reentrant")
 
-        settings_module = os.environ.get(ENVIRONMENT_VARIABLE)
+        settings_module = os.environ.get(self.ENVIRONMENT_VARIABLE)
         if not settings_module:
             raise RuntimeError(
                 "You must define the environment variable %s before "
-                "accessing settings." % ENVIRONMENT_VARIABLE
+                "accessing settings." % self.ENVIRONMENT_VARIABLE
             )
 
         self._load_settings(settings_module)

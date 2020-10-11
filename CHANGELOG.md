@@ -1,5 +1,8 @@
 # Change Log
 
+## [0.0.7](https://github.com/dldevinc/sanic-conf/tree/v0.0.7) - 2020-11-11
+- Add an ability to change environment variable name
+
 ## [0.0.6](https://github.com/dldevinc/sanic-conf/tree/v0.0.6) - 2020-11-11
 - Make `Settings` class extendable
 
